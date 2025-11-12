@@ -63,7 +63,7 @@ export default function ChatPage() {
                     />
                     <div className="min-w-0">
                         <div className="text-lg font-semibold truncate">{persona ? persona.name : 'AI Chat'}</div>
-                        {persona && <div className="text-xs text-gray-500 truncate">{persona.prompt}</div>}
+                        {persona && <div className="text-xs text-gray-500 truncate">{persona.description}</div>}
                     </div>
                 </div>
             </div>

@@ -9,15 +9,20 @@ export default function Home() {
         <p className="text-gray-500 mb-8 text-lg">Each persona has an identity and answers differently.</p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {personas.map(persona => (
-            <Link key={persona.id} href={`/chat?personaId=${persona.id}`}
+          {personas.map((persona) => (
+            <Link
+              key={persona.id}
+              href={`/chat?personaId=${persona.id}`}
               className="block p-5 rounded-xl shadow-lg hover:shadow-xl transition-all duration-400 border-2 border-gray-200 bg-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800 hover:scale-105"
             >
               <div className="flex flex-col items-center text-center">
-                <img src={persona.avatar} className="w-16 h-16 rounded-full mb-3 ring-4 shadow-md"
-                  alt={`${persona.name} Avatar`} />
+                <img
+                  src={persona.avatar}
+                  className="w-16 h-16 rounded-full mb-3 ring-4 shadow-md"
+                  alt={`${persona.name} Avatar`}
+                />
                 <h2 className="text-xl font-bold mb-1">{persona.name}</h2>
-                <p className="text-sm text-gray-500">{persona.prompt}</p>
+                <p className="text-sm text-gray-500">{persona.description || persona.prompt}</p>
               </div>
             </Link>
           ))}
