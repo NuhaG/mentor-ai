@@ -22,11 +22,11 @@ export default function Header({ persona, toggleSidebar }) {
                 />
 
                 <div className="min-w-0">
-                    <div className="text-lg font-semibold truncate">
+                    <div className="text-lg font-semibold">
                         {persona?.name || 'AI Chat'}
                     </div>
                     {persona && (
-                        <div className="text-xs text-gray-500 truncate">
+                        <div className="text-xs text-gray-500">
                             {persona.description}
                         </div>
                     )}

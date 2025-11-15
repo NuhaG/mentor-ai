@@ -12,7 +12,7 @@ export default function ChatInput({ input, setInput, sendMessage, loading, handl
                     onChange={(e) => setInput(e.target.value)}
                     onKeyDown={handleKeyDown}
                     rows={1}
-                    className="flex-1 p-3 rounded-r-sm rounded-l-3xl bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white resize-none focus:outline-none"
+                    className="flex-1 p-3 rounded-r-sm rounded-l-3xl bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white resize-none focus:outline-1 focus:outline-gray-200"
                     placeholder="Type your message..."
                 />
 

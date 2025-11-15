@@ -13,6 +13,7 @@ export default function ChatPage() {
     const [input, setInput] = useState("");
     const [loading, setLoading] = useState(false);
     const [sessions, setSessions] = useState([]);
+    const [currentSessionId, setCurrentSessionId] = useState(null);
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const bottomRef = useRef(null);
 
@@ -41,13 +42,11 @@ export default function ChatPage() {
         const timer = setTimeout(async () => {
             if (!persona || messages.length === 0) return;
 
-            const existing = sessions.find((s) => s.personaId === persona.id);
-
             const res = await fetch("/api/sessions", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    _id: existing?._id,
+                    _id: currentSessionId,
                     personaId: persona.id,
                     personaName: persona.name,
                     conversation: messages,
@@ -55,17 +54,20 @@ export default function ChatPage() {
             });
 
             const data = await res.json();
+
             if (data.session) {
-                setSessions((prev) =>
-                    existing
-                        ? prev.map((s) => (s._id === existing._id ? data.session : s))
-                        : [...prev, data.session]
-                );
+                setCurrentSessionId(data.session._id); // track current session
+                setSessions(prev => {
+                    const exists = prev.find(s => s._id === data.session._id);
+                    if (exists) return prev.map(s => s._id === exists._id ? data.session : s);
+                    return [...prev, data.session];
+                });
             }
+
         }, 1000);
 
         return () => clearTimeout(timer);
-    }, [messages, persona, sessions]);
+    }, [messages, persona, currentSessionId]);
 
     // delete saved
     const deleteSession = async (_id) => {
@@ -112,6 +114,7 @@ export default function ChatPage() {
     // open saved
     const loadSession = (s) => {
         setMessages(s.conversation || []);
+        setCurrentSessionId(s._id);
         setSidebarOpen(false);
     };
 
@@ -123,15 +126,26 @@ export default function ChatPage() {
         }
     };
 
+    // new session for curr user
+    const newSession = () => {
+        setMessages([]);
+        setCurrentSessionId(null);
+        setSidebarOpen(false);
+    };
+
+    // sess of curr 
+    const personaSessions = sessions.filter(s => s.personaId === persona?.id);
+
     return (
         <div className="h-screen flex flex-col bg-white dark:bg-gray-950">
             {/* All Saved Sessions */}
             <Sidebar
                 sidebarOpen={sidebarOpen}
-                sessions={sessions}
+                sessions={personaSessions}
                 loadSession={loadSession}
                 close={() => setSidebarOpen(false)}
                 deleteSession={deleteSession}
+                newSession={newSession}
             />
 
             {/* Header with persona info */}

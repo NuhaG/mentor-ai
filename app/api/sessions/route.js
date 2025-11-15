@@ -36,12 +36,8 @@ export async function POST(req) {
                 { new: true }
             );
         } else {
-            // if no _id, update by persona.id or new
-            session = await Session.findOneAndUpdate(
-                { personaId },
-                { conversation, personaName, createdAt: new Date() },
-                { new: true, upsert: true } // upsert: create new if not found
-            );
+            // create a new session
+            session = await Session.create({ personaId, personaName, conversation, createdAt: new Date(), });
         }
 
         return new Response(
