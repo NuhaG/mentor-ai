@@ -5,6 +5,8 @@ import { useSearchParams } from "next/navigation";
 import { personas } from "@/lib/personas";
 import { MdSend, MdArrowBack, MdMenu, MdClose } from "react-icons/md";
 import ReactMarkdown from "react-markdown";
+import VoiceInputButton from "@/components/VoiceInputButton";
+
 
 export default function ChatPage() {
     const [messages, setMessages] = useState([]);
@@ -32,12 +34,10 @@ export default function ChatPage() {
         fetchSessions();
     }, []);
 
-    // Scroll to bottom
     useEffect(() => {
         bottomRef.current?.scrollIntoView({ behavior: "smooth" });
     }, [messages]);
 
-    // Auto Save One entire conversation
     useEffect(() => {
         const autoSave = async () => {
             if (!persona || messages.length === 0) return;
@@ -195,16 +195,19 @@ export default function ChatPage() {
 
             {/* Input */}
             <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-950 border-t border-gray-200 dark:border-gray-800 z-40 px-6 py-3">
-                <div className="flex gap-3 items-end">
+                <div className="flex gap-1 items-end">
                     <textarea
                         value={input}
                         onChange={(e) => setInput(e.target.value)}
-                        onKeyDown={handleKeyDown}
+                        onKeyDown={handleKeyDown} // Ctrl + Enter to send
                         rows={1}
-                        className="flex-1 p-3 border rounded-l-full bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white resize-none focus:outline-none"
+                        className="flex-1 p-3 rounded-r-sm rounded-l-3xl bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white resize-none focus:outline-none focus:border"
                         placeholder="Type your message... (Ctrl + Enter to send)"
                     />
-                    <button onClick={sendMessage} disabled={!input.trim() || loading} className="shrink-0 w-10 h-10 bg-blue-600 text-white rounded-r-full flex items-center justify-center disabled:opacity-50 hover:bg-blue-700 transition-colors" title="Send (Ctrl + Enter)">
+
+                    <VoiceInputButton onTranscript={(text) => setInput(text)} />
+
+                    <button onClick={sendMessage} disabled={!input.trim() || loading} className="shrink-0 w-10 h-12 bg-blue-600 text-white rounded-l-sm rounded-r-3xl flex items-center justify-center disabled:opacity-50 hover:bg-blue-700 transition-colors" title="Send (Ctrl + Enter)">
                         <MdSend className="w-5 h-5" />
                     </button>
                 </div>
