@@ -16,25 +16,27 @@ export default function ChatPage() {
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const bottomRef = useRef(null);
 
+    // get the curr persona from the query
     const searchParams = useSearchParams();
     const personaId = searchParams?.get("personaId");
     const persona = personas.find((p) => String(p.id) === String(personaId)) || null;
 
+    // fetch all sessions from db
     useEffect(() => {
         const fetchSessions = async () => {
-            try {
-                const res = await fetch("/api/sessions");
-                const data = await res.json();
-                if (data.sessions) setSessions(data.sessions);
-            } catch {}
+            const res = await fetch("/api/sessions");
+            const data = await res.json();
+            if (data.sessions) setSessions(data.sessions);
         };
         fetchSessions();
     }, []);
 
+    // scroll to latest
     useEffect(() => {
         bottomRef.current?.scrollIntoView({ behavior: "smooth" });
     }, [messages]);
 
+    // auto save one entire session
     useEffect(() => {
         const timer = setTimeout(async () => {
             if (!persona || messages.length === 0) return;
@@ -65,6 +67,26 @@ export default function ChatPage() {
         return () => clearTimeout(timer);
     }, [messages, persona, sessions]);
 
+    // delete saved
+    const deleteSession = async (_id) => {
+        try {
+            const res = await fetch("/api/sessions", {
+                method: "DELETE",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ _id }),
+            });
+
+            if (res.ok) setSessions((prev) => prev.filter((s) => s._id !== _id));
+            else {
+                const data = await res.json();
+                console.error("Failed to delete session:", data.error || res.statusText);
+            }
+        } catch (err) {
+            console.error("Error deleting session:", err);
+        }
+    };
+
+    // mess handler
     const sendMessage = async () => {
         if (!input.trim()) return;
 
@@ -87,11 +109,13 @@ export default function ChatPage() {
         setLoading(false);
     };
 
+    // open saved
     const loadSession = (s) => {
         setMessages(s.conversation || []);
         setSidebarOpen(false);
     };
 
+    // ctrl + enter send
     const handleKeyDown = (e) => {
         if (e.key === "Enter" && e.ctrlKey) {
             e.preventDefault();
@@ -101,16 +125,19 @@ export default function ChatPage() {
 
     return (
         <div className="h-screen flex flex-col bg-white dark:bg-gray-950">
-
+            {/* All Saved Sessions */}
             <Sidebar
                 sidebarOpen={sidebarOpen}
                 sessions={sessions}
                 loadSession={loadSession}
                 close={() => setSidebarOpen(false)}
+                deleteSession={deleteSession}
             />
 
+            {/* Header with persona info */}
             <Header persona={persona} toggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
 
+            {/* Message Window */}
             <div className="w-full flex-1 pt-16 pb-24 px-6 flex flex-col space-y-4">
                 {messages.length === 0 ? (
                     <div className="h-[calc(100vh-8rem)] flex items-center justify-center text-center">
@@ -129,6 +156,7 @@ export default function ChatPage() {
                 <div ref={bottomRef} />
             </div>
 
+            {/* Text and Voice Input */}
             <ChatInput
                 input={input}
                 setInput={setInput}

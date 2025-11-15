@@ -6,6 +6,7 @@ export default function ChatInput({ input, setInput, sendMessage, loading, handl
     return (
         <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-950 border-t border-gray-200 dark:border-gray-800 z-40 px-6 py-3">
             <div className="flex gap-1 items-end">
+                {/* input box */}
                 <textarea
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
@@ -15,6 +16,7 @@ export default function ChatInput({ input, setInput, sendMessage, loading, handl
                     placeholder="Type your message..."
                 />
 
+                {/* voice inp call with transcript from mic */}
                 <VoiceInputButton onTranscript={(text) => setInput(text)} />
 
                 <button
@@ -28,4 +30,3 @@ export default function ChatInput({ input, setInput, sendMessage, loading, handl
         </div>
     );
 }
-    
