@@ -26,7 +26,7 @@ export default function Header({ persona, toggleSidebar }) {
                         {persona?.name || 'AI Chat'}
                     </div>
                     {persona && (
-                        <div className="text-xs text-gray-500">
+                        <div className="text-xs text-gray-500 hidden sm:block">
                             {persona.description}
                         </div>
                     )}

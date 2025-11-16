@@ -137,7 +137,7 @@ export default function ChatPage() {
     const personaSessions = sessions.filter(s => s.personaId === persona?.id);
 
     return (
-        <div className="h-screen flex flex-col bg-white dark:bg-gray-950">
+        <div className="bg-white dark:bg-gray-950">
             {/* All Saved Sessions */}
             <Sidebar
                 sidebarOpen={sidebarOpen}
@@ -152,7 +152,7 @@ export default function ChatPage() {
             <Header persona={persona} toggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
 
             {/* Message Window */}
-            <div className="w-full flex-1 pt-16 pb-24 px-6 flex flex-col space-y-4">
+            <div className="w-full flex-1 pt-16 pb-24 px-6 flex flex-col space-y-4 mt-6">
                 {messages.length === 0 ? (
                     <div className="h-[calc(100vh-8rem)] flex items-center justify-center text-center">
                         <div>

@@ -1,9 +1,28 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import ReactMarkdown from "react-markdown";
+import { MdVolumeMute, MdVolumeUp } from "react-icons/md";
 
 export default function Message({ m, persona }) {
     const isUser = m.role === "user";
+    const [speaking, setSpeaking] = useState(false);
+
+    const handleSpeaking = (text) => {
+        if (!window.speechSynthesis) return;
+
+        if (speaking) {
+            window.speechSynthesis.cancel();
+            setSpeaking(false);
+            return;
+        }
+
+        const utter = new SpeechSynthesisUtterance(text);
+        utter.lang = "en-UK";
+        utter.onend = () => setSpeaking(false);
+
+        window.speechSynthesis.speak(utter);
+        setSpeaking(true);
+    }
 
     // ai mess
     if (!isUser) {
@@ -16,8 +35,15 @@ export default function Message({ m, persona }) {
                 />
                 {/* formatted res */}
                 {/* needs some more formatting to support all types of res */}
-                <div className="inline-block max-w-[75%] p-3 rounded-lg shadow-sm bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white">
-                    <ReactMarkdown>{m.text}</ReactMarkdown>
+                <div>
+                    <div className="inline-block max-w-[75%] p-3 rounded-lg shadow-sm bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white">
+                        <ReactMarkdown>{m.text}</ReactMarkdown>
+                    </div>
+                    {/* TTS Button */}
+                    <button onClick={() => handleSpeaking(m.text)} className="flex items-center gap-1 text-sm mt-2 opacity-70 hover:opacity-100" >
+                        {speaking ? <MdVolumeMute /> : <MdVolumeUp />}
+                        {speaking ? "Stop" : "Speak"}
+                    </button>
                 </div>
             </div>
         );
