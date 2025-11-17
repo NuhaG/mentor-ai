@@ -101,7 +101,7 @@ export default function ChatPage() {
             const res = await fetch("/api/chat", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ message: text, persona: persona?.prompt || "" }),
+                body: JSON.stringify({ message: text, persona: persona?.prompt || "", history: messages }),
             });
             const data = await res.json();
             setMessages((p) => [...p, { role: "ai", text: data.reply }]);
