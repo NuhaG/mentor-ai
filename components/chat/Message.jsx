@@ -2,10 +2,14 @@
 import React, { useState } from "react";
 import ReactMarkdown from "react-markdown";
 import { MdVolumeMute, MdVolumeUp } from "react-icons/md";
+import { useTypingEffect } from "@/components/hooks/useTypingEffect"; // make sure your hook is imported
 
 export default function Message({ m, persona }) {
     const isUser = m.role === "user";
     const [speaking, setSpeaking] = useState(false);
+
+    // typing effect
+    const [displayText, stopTyping] = useTypingEffect(m.text, 20, m.role === "ai");
 
     const handleSpeaking = (text) => {
         if (!window.speechSynthesis) return;
@@ -15,6 +19,9 @@ export default function Message({ m, persona }) {
             setSpeaking(false);
             return;
         }
+
+        // stop ongoing typing
+        if (m.role === "ai") stopTyping();
 
         const utter = new SpeechSynthesisUtterance(text);
         utter.lang = "en-UK";
@@ -37,13 +44,27 @@ export default function Message({ m, persona }) {
                 {/* needs some more formatting to support all types of res */}
                 <div>
                     <div className="inline-block max-w-[75%] p-3 rounded-lg shadow-sm bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white">
-                        <ReactMarkdown>{m.text}</ReactMarkdown>
+                        <ReactMarkdown>{displayText}</ReactMarkdown>
                     </div>
-                    {/* TTS Button */}
-                    <button onClick={() => handleSpeaking(m.text)} className="flex items-center gap-1 text-sm mt-2 opacity-70 hover:opacity-100" >
-                        {speaking ? <MdVolumeMute /> : <MdVolumeUp />}
-                        {speaking ? "Stop" : "Speak"}
-                    </button>
+                    {/* TTS & Skip button */}
+                    <div className="flex items-center gap-2 mt-2 text-sm opacity-70 hover:opacity-100">
+                        <button
+                            onClick={() => handleSpeaking(m.text)}
+                            className="flex items-center gap-1"
+                        >
+                            {speaking ? <MdVolumeMute /> : <MdVolumeUp />}
+                            {speaking ? "Stop" : "Speak"}
+                        </button>
+
+                        {displayText !== m.text && (
+                            <button
+                                onClick={stopTyping}
+                                className="text-gray-500 hover:text-gray-700"
+                            >
+                                Skip
+                            </button>
+                        )}
+                    </div>
                 </div>
             </div>
         );
