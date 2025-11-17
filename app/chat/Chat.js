@@ -8,7 +8,7 @@ import Header from "@/components/chat/Header";
 import Message from "@/components/chat/Message";
 import ChatInput from "@/components/chat/ChatInput";
 
-export default function ChatPage() {
+export default function Chat() {
     const [messages, setMessages] = useState([]);
     const [input, setInput] = useState("");
     const [loading, setLoading] = useState(false);
