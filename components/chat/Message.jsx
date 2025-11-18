@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import ReactMarkdown from "react-markdown";
-import { MdVolumeMute, MdVolumeUp } from "react-icons/md";
+import { MdSkipNext, MdVolumeMute, MdVolumeUp } from "react-icons/md";
 import { useTypingEffect } from "@/components/hooks/useTypingEffect"; // make sure your hook is imported
 
 export default function Message({ m, persona }) {
@@ -9,7 +9,7 @@ export default function Message({ m, persona }) {
     const [speaking, setSpeaking] = useState(false);
 
     // typing effect
-    const [displayText, stopTyping] = useTypingEffect(m.text, 20, m.role === "ai");
+    const [displayText, stopTyping] = useTypingEffect(m.text, 20, m.role === "ai" && m.isNew === true);
 
     const handleSpeaking = (text) => {
         if (!window.speechSynthesis) return;
@@ -43,9 +43,6 @@ export default function Message({ m, persona }) {
                 {/* formatted res */}
                 {/* needs some more formatting to support all types of res */}
                 <div>
-                    <div className="inline-block max-w-[75%] p-3 rounded-lg shadow-sm bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white">
-                        <ReactMarkdown>{displayText}</ReactMarkdown>
-                    </div>
                     {/* TTS & Skip button */}
                     <div className="flex items-center gap-2 mt-2 text-sm opacity-70 hover:opacity-100">
                         <button
@@ -61,9 +58,12 @@ export default function Message({ m, persona }) {
                                 onClick={stopTyping}
                                 className="text-gray-500 hover:text-gray-700"
                             >
-                                Skip
+                                <MdSkipNext />
                             </button>
                         )}
+                    </div>
+                    <div className="inline-block max-w-[75%] p-3 rounded-lg shadow-sm bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white">
+                        <ReactMarkdown>{displayText}</ReactMarkdown>
                     </div>
                 </div>
             </div>

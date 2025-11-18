@@ -104,7 +104,7 @@ export default function Chat() {
                 body: JSON.stringify({ message: text, persona: persona?.prompt || "", history: messages }),
             });
             const data = await res.json();
-            setMessages((p) => [...p, { role: "ai", text: data.reply }]);
+            setMessages((p) => [...p, { role: "ai", text: data.reply, isNew: true }]);
         } catch {
             setMessages((p) => [...p, { role: "ai", text: "Error: Could not get response." }]);
         }
